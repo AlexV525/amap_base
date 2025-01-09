@@ -228,3 +228,85 @@ class LatLngBounds {
   @override
   int get hashCode => Object.hashAll([southwest, northeast]);
 }
+
+/// 可视区域：地图 View 四个顶点对应的经纬度所围成的多边形被称作 可视区域；
+/// 此多边形是不规则四边形，如果地图没有倾斜时，可视区域为矩形，
+/// 如果地图有倾斜时，可视区域为梯形。
+@immutable
+class VisibleRegion {
+  const VisibleRegion({
+    required this.latLngBounds,
+    required this.farLeft,
+    required this.farRight,
+    required this.nearLeft,
+    required this.nearRight,
+  });
+
+  /// 由可视区域的四个顶点形成的经纬度范围
+  final LatLngBounds latLngBounds;
+
+  /// 可视区域的左上角
+  final LatLng farLeft;
+
+  /// 可视区域的右上角
+  final LatLng farRight;
+
+  /// 可视区域的左下角
+  final LatLng nearLeft;
+
+  /// 可视区域的右下角
+  final LatLng nearRight;
+
+  /// 根据传入的内容序列化一个 VisibleRegion 对象。
+  static VisibleRegion? fromJson(Map? json) {
+    if (json == null) {
+      return null;
+    }
+    return VisibleRegion(
+      latLngBounds: LatLngBounds.fromList(json['latLngBounds'])!,
+      farLeft: LatLng.fromJson(json['farLeft'])!,
+      farRight: LatLng.fromJson(json['farRight'])!,
+      nearLeft: LatLng.fromJson(json['nearLeft'])!,
+      nearRight: LatLng.fromJson(json['nearRight'])!,
+    );
+  }
+
+  Map<String, Object> toJson() {
+    return {
+      'latLngBounds': latLngBounds.toJson(),
+      'farLeft': farLeft.toJson(),
+      'farRight': farRight.toJson(),
+      'nearLeft': nearLeft.toJson(),
+      'nearRight': nearRight.toJson(),
+    };
+  }
+
+  @override
+  String toString() {
+    return 'VisibleRegion(${toJson()})';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! VisibleRegion) {
+      return false;
+    }
+    return latLngBounds == other.latLngBounds &&
+        farLeft == other.farLeft &&
+        farRight == other.farRight &&
+        nearLeft == other.nearLeft &&
+        nearRight == other.nearRight;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+        latLngBounds,
+        farLeft,
+        farRight,
+        nearLeft,
+        nearRight,
+      ]);
+}
